@@ -4,7 +4,7 @@ import { toast } from "material-react-toastify";
 // const navigate = useNavigate();
 
 const axiosConfig = {
-  baseURL: "http://localhost:8000/",
+  baseURL: "https://profuse-backend.vercel.app/",
   timeout: 300000,
 };
 
