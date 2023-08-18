@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginImage from "../../assets/images/login.png";
 import BoltIcon from "@mui/icons-material/Bolt";
 import {
@@ -9,8 +9,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  Button,
 } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
 import { Link, useNavigate } from "react-router-dom";
 import { userAuthLoginRequest } from "../../services/authServices";
 import { toast } from "material-react-toastify";
@@ -26,7 +26,19 @@ export default function Login() {
     password: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const uid = localStorage.getItem("uid");
+    const role = localStorage.getItem("role");
+    if(uid && role === "Admin") {
+      navigate("/adminDashboard")
+    } else if(uid && role === "User") {
+      navigate("/userDashboard")
+    }
+  },[])
 
   function handleChange(event) {
     const name = event.target.name;
@@ -58,17 +70,29 @@ export default function Login() {
         email: loginCredentials.email,
         password: loginCredentials.password
       }
+      setIsLoading(true);
       userAuthLoginRequest(data)
       .then(res => {
-        if(res.status === 200) {
+        if(res.data.status === 200) {
           toast.success("User logged in successfully")
+          localStorage.setItem("token", res.data.data.token)
           localStorage.setItem("uid", res.data.data.user._id)
+          localStorage.setItem("role", res.data.data.user.role)
           if(res.data.data.user.role === "User") {
             navigate("/userDashboard")
           } else if(res.data.data.user.role === "Admin") {
             navigate("/adminDashboard")
           }
+        } else {
+          toast.error(res.data.message)
         }
+      })
+      .catch(err => {
+        console.log(err);
+        toast.error(err.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
       })
     }
 
@@ -134,7 +158,9 @@ export default function Login() {
             </FormGroup>
             <Typography color="#4848e9">Forgot Password?</Typography>
           </Box>
-          <Button
+          <LoadingButton
+            loading = {isLoading}
+            loadingPosition="start"
             variant="contained"
             sx={{ my: 2.5 }}
             size="large"
@@ -142,7 +168,7 @@ export default function Login() {
             onClick={handleLogin}
           >
             Login
-          </Button>
+          </LoadingButton>
           <Box display="flex" alignItems="center">
             <Typography>Not registered yet?</Typography>
             <Link to="/signUp" style={{textDecoration: "none", color:"#48484e9"}}>Create an Account</Link>

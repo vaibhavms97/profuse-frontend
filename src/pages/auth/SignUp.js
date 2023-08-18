@@ -9,8 +9,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  Button,
 } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
 import { Link, useNavigate } from "react-router-dom";
 import { userAuthSignUpRequest } from "../../services/authServices";
 import { toast } from "material-react-toastify";
@@ -30,6 +30,8 @@ export default function SignUp() {
     confirmPassword:"",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   function handleChange(event) {
@@ -38,7 +40,7 @@ export default function SignUp() {
     setSignUpCredentials((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleLogin() {
+  function handleSignUp() {
     let error = {
       fullName:"",
       email: "",
@@ -76,12 +78,22 @@ export default function SignUp() {
         email: signUpCredentials.email,
         password: signUpCredentials.password
       }
+      setIsLoading(true);
       userAuthSignUpRequest(data)
       .then(res => {
-        if(res.status === 200) {
+        if(res.data.status === 200) {
           toast.success("User registered successfully")
           navigate("/login");
+        } else {
+          toast.error(res.data.message)
         }
+      })
+      .catch(err => {
+        console.log(err);
+        toast.error(err.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
       })
     }
 
@@ -172,15 +184,17 @@ export default function SignUp() {
             </FormGroup>
             <Typography color="#4848e9">Forgot Password?</Typography>
           </Box>
-          <Button
+          <LoadingButton
+            loading = {isLoading}
+            loadingPosition="start"
             variant="contained"
             sx={{ my: 2.5 }}
             size="large"
             fullWidth
-            onClick={handleLogin}
+            onClick={handleSignUp}
           >
             Sign Up
-          </Button>
+          </LoadingButton>
           <Box display="flex" alignItems="center">
             <Typography>Already a User?</Typography>
             <Link to="/login" style={{textDecoration: "none", color:"#48484e9"}}>Login</Link>

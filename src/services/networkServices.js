@@ -4,7 +4,7 @@ import { toast } from "material-react-toastify";
 // const navigate = useNavigate();
 
 const axiosConfig = {
-  baseURL: "https://profuse-backend.vercel.app/",
+  baseURL: "https://profuse-backend.vercel.app",
   timeout: 300000,
 };
 
@@ -15,7 +15,7 @@ const commonXHRInstance = axios.create(axiosConfig);
 
 commonXHRInstance.interceptors.request.use(
   async (apiConfig) => {
-    const tokenData = sessionStorage.getItem("uid");
+    const tokenData = localStorage.getItem("token");
     const config = apiConfig ? apiConfig : {};
 
     const cancelController = new AbortController();
@@ -26,7 +26,7 @@ commonXHRInstance.interceptors.request.use(
     try {
       config["headers"]["Content-Type"] = "application/json";
       if (tokenData) {
-        config["headers"]["Authorization"] = tokenData;
+        config["headers"]["Authorization"] = `Bearer ${tokenData}`;
       }
     } catch (error) {
       cancelController.abort();
@@ -44,8 +44,8 @@ commonXHRInstance.interceptors.response.use(
   },
   function (error) {
     if (
-      error.response?.data?.status == 401 ||
-      error.response?.data?.code == 401
+      error.response?.data?.status === 401 ||
+      error.response?.data?.code === 401
       // && error.response.data.errorCode == 11
     ) {
       toast.warning(error.response.data.message);
