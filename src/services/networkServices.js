@@ -8,6 +8,7 @@ const axiosConfig = {
   timeout: 300000,
 };
 
+
 /**
  * Create an Axios Client for Auth Module
  */

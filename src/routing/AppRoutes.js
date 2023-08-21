@@ -7,6 +7,7 @@ import UserDashboard from "../pages/dashboard/userDashboard";
 import PrivateRoutesCollection from "./PrivateRouteCollection";
 
 export default function AppRoutes() {
+
   return (
     <BrowserRouter>
       <Routes>

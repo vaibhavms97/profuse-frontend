@@ -13,13 +13,13 @@ export default function Profile() {
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
-    phoneNumber: "",
+    phone: "",
   });
 
   const [updatedUserDetails, setUpdatedUserDetails] = useState({
     name: "",
     email: "",
-    phoneNumber: "",
+    phone: "",
   });
 
   const [errorDetails, setErrorDetails] = useState({
@@ -36,8 +36,12 @@ export default function Profile() {
     setIsFetchingData(true);
     getUserProfileRequest()
       .then((res) => {
-        setUserDetails({...res.data.data.user, phone:""});
-        setUpdatedUserDetails({...res.data.data.user, phone:""});
+        const data = res.data.data.user
+        if(!data.phone) {
+          data.phone = ""
+        }
+        setUserDetails(data);
+        setUpdatedUserDetails(data);
       })
       .finally(() => {
         setIsFetchingData(false);
