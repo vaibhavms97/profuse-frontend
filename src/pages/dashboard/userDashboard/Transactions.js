@@ -36,7 +36,6 @@ export default function Transactions() {
   }, []);
 
   function handlePageChange(pageNo) {
-    console.log("pageNo", pageNo)
     setIsLoading(true);
     getTransactionsRequest(pageNo)
       .then((res) => {
@@ -68,7 +67,7 @@ export default function Transactions() {
                     <TableCell style={{ width: "300px" }} align="center">
                       Product Description
                     </TableCell>
-                    <TableCell align="center">Product Amount</TableCell>
+                    <TableCell align="center">Amount Invested</TableCell>
                     <TableCell align="center">Product Offering</TableCell>
                     {/* <TableCell align="center">Action</TableCell> */}
                   </TableRow>
@@ -83,7 +82,7 @@ export default function Transactions() {
                         {transaction.product_id?.product_description}
                       </TableCell>
                       <TableCell align="center">
-                        ${transaction.product_id?.product_amount}
+                        ${transaction.amount}
                       </TableCell>
                       <TableCell align="center">{`${transaction?.invest_percent}%  -  ${transaction?.no_of_days} days`}</TableCell>
                       {/* <TableCell>
