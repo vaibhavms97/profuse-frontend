@@ -5,8 +5,8 @@ import { commonXHRInstance } from "./networkServices";
 export const getDashboardRequest = async () =>
   commonXHRInstance.get(getDashboardUrl());
 
-export const getProductsListRequest = async () =>
-  commonXHRInstance.get(getProductsList());
+export const getProductsListRequest = async (pageNo) =>
+  commonXHRInstance.get(getProductsList()+`?page=${pageNo}`);
 
-export const getTransactionsRequest = async () =>
-  commonXHRInstance.get(getTransactions());
+export const getTransactionsRequest = async (pageNo) =>
+  commonXHRInstance.get(getTransactions()+`?page=${pageNo}`);

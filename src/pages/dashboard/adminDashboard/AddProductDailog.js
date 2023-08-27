@@ -10,6 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useState } from 'react';
 import { addProductRequest } from '../../../services/adminService';
 import { toast } from 'material-react-toastify';
+import { InputAdornment } from '@mui/material';
 
 export default function AddProductDialog({open, setOpen, productsList, setProductsList}){
 
@@ -119,18 +120,18 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           data._id = res.data.data.product._id;
           modifiedProductList.unshift(data);
           setProductsList([...modifiedProductList])
-          // setProductDetails({
-          //   productName:"",
-          //   productDescription:"",
-          //   productOffering1:"",
-          //   productOffering1Days:"",
-          //   productOffering2:"",
-          //   productOffering2Days:"",
-          //   productOffering3:"",
-          //   productOffering3Days:"",
-          //   productAmount:""
-          // })
-          // handleClose();
+          setProductDetails({
+            productName:"",
+            productDescription:"",
+            productOffering1:"",
+            productOffering1Days:"",
+            productOffering2:"",
+            productOffering2Days:"",
+            productOffering3:"",
+            productOffering3Days:"",
+            productAmount:""
+          })
+          handleClose();
         } else {
           toast.error(res.data.message)
         }
@@ -177,6 +178,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         <Box display="flex" alignItems="center">
           <TextField
             sx={{ my: 1, maxWidth:"100px" }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">%</InputAdornment>
+            }}
             label="Product Offering 1"
             name="productOffering1"
             onChange={handleChange}
@@ -189,6 +193,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           />
           <TextField
             sx={{ my: 1, ml: 1.5}}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">days</InputAdornment>
+            }}
             label="Product Offering 1 Days"
             name="productOffering1Days"
             onChange={handleChange}
@@ -203,6 +210,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         <Box display="flex" alignItems="center">
           <TextField
             sx={{ my: 1, maxWidth:"100px" }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">%</InputAdornment>
+            }}
             label="Product Offering 2"
             name="productOffering2"
             onChange={handleChange}
@@ -214,6 +224,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           />
           <TextField
             sx={{ my: 1, ml: 1.5}}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">days</InputAdornment>
+            }}
             label="Product Offering 2 Days"
             name="productOffering2Days"
             onChange={handleChange}
@@ -227,6 +240,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         <Box display="flex" alignItems="center">
           <TextField
             sx={{ my: 1, maxWidth:"100px" }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">%</InputAdornment>
+            }}
             label="Product Offering 3"
             name="productOffering3"
             onChange={handleChange}
@@ -238,6 +254,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           />
           <TextField
             sx={{ my: 1, ml: 1.5}}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">days</InputAdornment>
+            }}
             label="Product Offering 3 Days"
             name="productOffering3Days"
             onChange={handleChange}
@@ -250,6 +269,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         </Box>
         <TextField
           sx={{ my: 1 }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>
+          }}
           label="Product Amount"
           name="productAmount"
           onChange={handleChange}
@@ -274,7 +296,7 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           loading = {isLoading}
           loadingPosition="start"
           variant="contained"
-          sx={{ mb: 2.5, mr: 2 }}
+          sx={{ mb: 2.5, mr: 2, width: "200px" }}
           size="large"
           onClick={handleAddProduct}
         >

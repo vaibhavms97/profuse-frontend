@@ -112,8 +112,8 @@ export default function Products() {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Product Name</TableCell>
-                    <TableCell align="center">Product Description</TableCell>
+                    <TableCell style={{width: "150px"}}>Product Name</TableCell>
+                    <TableCell style={{width: "300px"}} align="center">Product Description</TableCell>
                     <TableCell align="center">Product Amount</TableCell>
                     <TableCell align="center">Product Offering 1</TableCell>
                     <TableCell align="center">Product Offering 2</TableCell>
@@ -130,7 +130,7 @@ export default function Products() {
                         {product.product_description}
                       </TableCell>
                       <TableCell align="center">
-                        {product.product_amount}
+                        ${product.product_amount}
                       </TableCell>
                       <TableCell align="center">{`${product.product_offering1}%  -  ${product.product_offering1_days} days`}</TableCell>
                       <TableCell align="center">

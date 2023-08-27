@@ -250,7 +250,7 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
           loading = {isLoading}
           loadingPosition="start"
           variant="contained"
-          sx={{ mb: 2.5, mr: 2 }}
+          sx={{ mb: 2.5, mr: 2, width: "200px" }}
           size="large"
           onClick={handleEditProduct}
         >
