@@ -23,13 +23,22 @@ export default function InvestDialog({open, setOpen, product, investmentDone}) {
   const [errorDetails, setErrorDetails] = useState({
     product_amount: "",
   });
-  const [selectedPercentage, setSelectedPercentage] = useState("");
-  const [selectedDays, setSelectedDays] = useState("");
+  const [selectedPercentage, setSelectedPercentage] = useState(product.product_offering1);
+  const [selectedDays, setSelectedDays] = useState(product.product_offering1_days);
   const [isLoading, setIsLoading] = useState(false);
 
 
   function handleClose() {
     setOpen(false);
+    setInvestedDetails({
+      product_offering: 1,
+      product_amount: "",
+    })
+    setErrorDetails({
+      product_amount: "",
+    })
+    setSelectedPercentage(product.product_offering1)
+    setSelectedDays(product.product_offering1_days)
   }
 
   function handleChange(e) {
@@ -53,11 +62,14 @@ export default function InvestDialog({open, setOpen, product, investmentDone}) {
       setErrorDetails({product_amount: "Please enter product amount"});
     } else {
       setErrorDetails({product_amount: ""});
+      const date = new Date();
+      date.setDate(date.getDate() + Number(selectedDays));
       const data = {
         invest_amount: investedDetails.product_amount,
         invest_percent: selectedPercentage,
         no_of_days: selectedDays,
         product_id: product._id,
+        ends_at: date,
       }
       setIsLoading(true);
       investAmountRequest(data)

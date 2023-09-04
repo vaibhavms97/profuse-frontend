@@ -7,7 +7,9 @@ const blockUserUrl = () => "/api/v1/admin/user/change-user-status";
 const deleteUserUrl = () => "/api/v1/admin/user/delete-user";
 const investAmountUrl = () => "/api/v1/web/account/invest-amount";
 const depositFundUrl = () => "/api/v1/web/account/deposit-fund";
-const withdrawFundUrl = () => "/api/v1/web/account/withdraw-fund"
+const withdrawFundUrl = () => "/api/v1/web/account/withdraw-fund";
+const getAdminEarningsUrl = () => "api/v1/admin/earnings/get-admin-earnings";
+
 
 export {
   getProductsUrl,
@@ -20,4 +22,5 @@ export {
   investAmountUrl,
   depositFundUrl,
   withdrawFundUrl,
+  getAdminEarningsUrl,
 }

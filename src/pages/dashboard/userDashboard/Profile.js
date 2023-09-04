@@ -1,4 +1,10 @@
-import { Box, Button, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import {
   getUserProfileRequest,
@@ -9,9 +15,12 @@ import { toast } from "material-react-toastify";
 import { LoadingButton } from "@mui/lab";
 import Loader from "../../../components/common/Loader";
 import { getDashboardRequest } from "../../../services/dashboardServices";
-import { depositFundRequest, withdrawFundRequest } from "../../../services/adminService";
+import {
+  depositFundRequest,
+  withdrawFundRequest,
+} from "../../../services/adminService";
 
-export default function Profile({setSelectedTab}) {
+export default function Profile({ setSelectedTab }) {
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
@@ -37,6 +46,7 @@ export default function Profile({setSelectedTab}) {
   const [money, setMoney] = useState("");
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     setIsFetchingData(true);
@@ -110,44 +120,48 @@ export default function Profile({setSelectedTab}) {
   }
 
   function handleWithdraw() {
-    if(parseInt(accountDetails.account_balance) > 0) {
-      setWithdrawLoading(true)
-      withdrawFundRequest({account_balance: money})
-      .then(res => {
-        if(res.data.status === 200) {
-          toast.success("Withdrawn successfully");
-          setSelectedTab("dashboard");
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-        console.log(err);
-      })
-      .finally(() => {
-        setWithdrawLoading(false);
-      });
+    if (parseInt(accountDetails.account_balance) > 0) {
+      setWithdrawLoading(true);
+      withdrawFundRequest({ account_balance: money })
+        .then((res) => {
+          if (res.data.status === 200) {
+            toast.success("Withdrawn successfully");
+            setSelectedTab("dashboard");
+          }
+        })
+        .catch((err) => {
+          toast.error(err.message);
+          console.log(err);
+        })
+        .finally(() => {
+          setWithdrawLoading(false);
+        });
     } else {
       toast.error("Sorry, you have insufficient balance");
     }
   }
 
   function handleAddMoney() {
-    setAddLoading(true)
-    depositFundRequest({account_balance: money})
-    .then(res => {
-      if(res.data.status === 200) {
-        toast.success("Added to your wallet successfully");
-        setSelectedTab("dashboard");
-      }
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      console.log(err);
-    })
-    .finally(() => {
-      setAddLoading(false);
-      
-    });
+    if (Number(accountDetails.vested_balance) + Number(money) > 10000) {
+      const validAmount = 10000 - Number(accountDetails.vested_balance)
+      toast.error(`Sorry you can add upto $${validAmount}`);
+    } else {
+      setAddLoading(true);
+      depositFundRequest({ account_balance: money })
+        .then((res) => {
+          if (res.data.status === 200) {
+            toast.success("Added to your wallet successfully");
+            setSelectedTab("dashboard");
+          }
+        })
+        .catch((err) => {
+          toast.error(err.message);
+          console.log(err);
+        })
+        .finally(() => {
+          setAddLoading(false);
+        });
+    }
   }
 
   return (
@@ -212,40 +226,48 @@ export default function Profile({setSelectedTab}) {
                 Update
               </LoadingButton>
             </Box>
-            <TextField
-              sx={{ my: 2.5 }}
-              InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
-              label="Add or Withdraw money"
-              name="money"
-              onChange={(e) => setMoney(e.target.value)}
-              value={money}
-              error={errorDetails.phone ? true : false}
-              helperText={errorDetails.phone}
-              fullWidth
-              placeholder="Enter Amount"
-            />
-            <Box display="flex" justifyContent="space-around">
-              <LoadingButton
-                variant="outlined"
-                onClick={handleWithdraw}
-                loading={withdrawLoading}
-                loadingPosition="start"
-                size="large"
-                sx={{ my: 2.5, width: "180px" }}
-              >
-                Withdraw
-              </LoadingButton>
-              <LoadingButton
-                variant="contained"
-                onClick={handleAddMoney}
-                loading={addLoading}
-                loadingPosition="start"
-                size="large"
-                sx={{ my: 2.5, width: "180px" }}
-              >
-                Add Money
-              </LoadingButton>
-            </Box>
+            {role !== "Admin" && (
+              <>
+                <TextField
+                  sx={{ my: 2.5 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  label="Add or Withdraw money"
+                  name="money"
+                  onChange={(e) => setMoney(e.target.value)}
+                  value={money}
+                  error={errorDetails.phone ? true : false}
+                  helperText={errorDetails.phone}
+                  fullWidth
+                  placeholder="Enter Amount"
+                />
+                <Box display="flex" justifyContent="space-around">
+                  <LoadingButton
+                    variant="outlined"
+                    onClick={handleWithdraw}
+                    loading={withdrawLoading}
+                    loadingPosition="start"
+                    size="large"
+                    sx={{ my: 2.5, width: "180px" }}
+                  >
+                    Withdraw
+                  </LoadingButton>
+                  <LoadingButton
+                    variant="contained"
+                    onClick={handleAddMoney}
+                    loading={addLoading}
+                    loadingPosition="start"
+                    size="large"
+                    sx={{ my: 2.5, width: "180px" }}
+                  >
+                    Add Money
+                  </LoadingButton>
+                </Box>
+              </>
+            )}
           </Box>
         </Box>
       </Box>

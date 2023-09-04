@@ -1,4 +1,4 @@
-import { getDashboardUrl, getProductsList, getTransactions } from "../constants/apiUrls/dashboard";
+import { getDashboardUrl, getProductsList, getTransactions, getUserEarnings, withdrawTransaction } from "../constants/apiUrls/dashboard";
 import { commonXHRInstance } from "./networkServices";
 
 
@@ -10,3 +10,9 @@ export const getProductsListRequest = async (pageNo) =>
 
 export const getTransactionsRequest = async (pageNo) =>
   commonXHRInstance.get(getTransactions()+`?page=${pageNo}`);
+
+export const withdrawTransactionRequest = async (data) => 
+  commonXHRInstance.post(withdrawTransaction(), data)
+
+export const getUserEarningsRequest = async (pageNo) =>
+  commonXHRInstance.get(getUserEarnings() + `?page=${pageNo}`);

@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
 import Dashboard from "./Dashboard";
+import Earnings from "./Earnings";
 import Profile from "./Profile";
 import SidePanel from "./sidePanel/SidePanel";
 import Transactions from "./Transactions";
@@ -13,6 +14,7 @@ export default function UserDashboard() {
       {selectedTab === "dashboard" && <Dashboard />}
       {selectedTab === "profile" && <Profile setSelectedTab={setSelectedTab} />}
       {selectedTab === "transactions" && <Transactions />}
+      {selectedTab === "earnings" && <Earnings />}
     </Box>
   )
 }

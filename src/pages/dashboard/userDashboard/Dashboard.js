@@ -1,7 +1,24 @@
-import { Box, Typography, Grid, Card, CardContent, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Button,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { getUserProfileRequest } from "../../../services/authServices";
-import { getDashboardRequest, getProductsListRequest } from "../../../services/dashboardServices";
+import {
+  getDashboardRequest,
+  getProductsListRequest,
+} from "../../../services/dashboardServices";
 import { format } from "date-fns";
 import { toast } from "material-react-toastify";
 import Loader from "../../../components/common/Loader";
@@ -17,11 +34,14 @@ export default function Dashboard() {
   const [isInvestDialogOpen, setIsInvestDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [productPage, setProductPage] = useState(0);
- 
 
   useEffect(() => {
     setIsLoading(true);
-    const promises = [getUserProfileRequest(), getDashboardRequest(), getProductsListRequest(1)];
+    const promises = [
+      getUserProfileRequest(),
+      getDashboardRequest(),
+      getProductsListRequest(1),
+    ];
     Promise.all(promises)
       .then((res) => {
         setUserDetails(res[0].data.data.user);
@@ -41,32 +61,36 @@ export default function Dashboard() {
   function handlePageChange(pageNo) {
     setIsLoading(true);
     getProductsListRequest(pageNo)
-    .then((res) => {
-      setProductsList(res.data.data.products.docs);
-      setProductDetails(res.data.data.products);
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      console.log(err);
-    })
-    .finally(() => {
-      setIsLoading(false);
-      setProductPage(pageNo);
-    });
+      .then((res) => {
+        setProductsList(res.data.data.products.docs);
+        setProductDetails(res.data.data.products);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setProductPage(pageNo);
+      });
   }
 
   function handleInvest(product) {
-    if(accountDetails.account_balance > 0) {
+    if (accountDetails.account_balance > 0) {
       setIsInvestDialogOpen(true);
       setSelectedProduct(product);
     } else {
-      toast.error("Sorry, you don't have sufficient balance")
+      toast.error("Sorry, you don't have sufficient balance");
     }
   }
 
   function investmentDone() {
     setIsLoading(true);
-    const promises = [getUserProfileRequest(), getDashboardRequest(), getProductsListRequest(productPage)];
+    const promises = [
+      getUserProfileRequest(),
+      getDashboardRequest(),
+      getProductsListRequest(productPage),
+    ];
     Promise.all(promises)
       .then((res) => {
         setUserDetails(res[0].data.data.user);
@@ -83,10 +107,9 @@ export default function Dashboard() {
       });
   }
 
-
   return (
     <>
-      {isLoading && <Loader/>}
+      {isLoading && <Loader />}
       <Box pl="240px">
         <Box m={4}>
           <Box>
@@ -147,8 +170,12 @@ export default function Dashboard() {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell style={{width: "150px"}}>Product Name</TableCell>
-                    <TableCell style={{width: "300px"}} align="center">Product Description</TableCell>
+                    <TableCell style={{ width: "150px" }}>
+                      Product Name
+                    </TableCell>
+                    <TableCell style={{ width: "300px" }} align="center">
+                      Product Description
+                    </TableCell>
                     <TableCell align="center">Product Amount</TableCell>
                     <TableCell align="center">Product Offering 1</TableCell>
                     <TableCell align="center">Product Offering 2</TableCell>
@@ -178,7 +205,9 @@ export default function Dashboard() {
                           : "N/A"}
                       </TableCell>
                       <TableCell>
-                        <Button onClick={() => handleInvest(product)}>Invest</Button>
+                        <Button onClick={() => handleInvest(product)}>
+                          Invest
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -186,13 +215,20 @@ export default function Dashboard() {
               </Table>
             </TableContainer>
           )}
-          {!isLoading && <Pagination
-            currentPage={productDetails.page}
-            totalPages={productDetails.totalPages}
-            handlePageChange={handlePageChange}
-          />}
+          {!isLoading && (
+            <Pagination
+              currentPage={productDetails.page}
+              totalPages={productDetails.totalPages}
+              handlePageChange={handlePageChange}
+            />
+          )}
         </Box>
-        <InvestDialog open={isInvestDialogOpen} setOpen={setIsInvestDialogOpen} product={selectedProduct} investmentDone={investmentDone} />
+        <InvestDialog
+          open={isInvestDialogOpen}
+          setOpen={setIsInvestDialogOpen}
+          product={selectedProduct}
+          investmentDone={investmentDone}
+        />
       </Box>
     </>
   );

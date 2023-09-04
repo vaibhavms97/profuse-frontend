@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Earnings from "../userDashboard/Earnings";
 import Profile from "../userDashboard/Profile";
 import ManageUsers from "./ManageUsers";
 import Products from "./Products";
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
       {selectedTab === "products" && <Products/> }
       {selectedTab === "manageUsers" && <ManageUsers/> }
       {selectedTab === "profile" && <Profile/> }
+      {selectedTab === "earnings" && <Earnings />}
     </div>
   )
 }

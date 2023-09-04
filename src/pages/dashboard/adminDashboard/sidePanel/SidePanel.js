@@ -3,7 +3,7 @@ import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
-import { CubeIcon, UserGroupIcon, ArrowRightOnRectangleIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { CubeIcon, UserGroupIcon, ArrowRightOnRectangleIcon, UserCircleIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import BoltIcon from "@mui/icons-material/Bolt";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -64,6 +64,24 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
           >
             <CubeIcon style={{ width: "30px", height: "30px" }} />
             <Typography ml={1}>Products</Typography>
+          </Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            width="86%"
+            p={1.5}
+            mx={2}
+            my={0.5}
+            onClick={() => setSelectedTab("earnings")}
+            sx={{
+              cursor: "pointer",
+              borderRadius: "8px",
+              background: selectedTab === "earnings" ? "#4848e9" : "",
+              color: selectedTab === "earnings" ? "#fff" : "",
+            }}
+          >
+            <CurrencyDollarIcon style={{ width: "30px", height: "30px" }} />
+            <Typography ml={1}>Admin Earnings</Typography>
           </Box>
           <Box
             display="flex"

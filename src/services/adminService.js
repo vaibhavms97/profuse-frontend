@@ -5,6 +5,7 @@ import {
   deleteUserUrl,
   depositFundUrl,
   editProductUrl,
+  getAdminEarningsUrl,
   getProductsUrl,
   getUsersUrl,
   investAmountUrl,
@@ -39,5 +40,8 @@ export const investAmountRequest = async (data) =>
 export const depositFundRequest = async (data) =>
   commonXHRInstance.post(depositFundUrl(), data);
 
-  export const withdrawFundRequest = async (data) =>
+export const withdrawFundRequest = async (data) =>
   commonXHRInstance.post(withdrawFundUrl(), data);
+
+export const getAdminEarningsRequest = async (pageNo) =>
+  commonXHRInstance.get(getAdminEarningsUrl() + `?page=${pageNo}`);
