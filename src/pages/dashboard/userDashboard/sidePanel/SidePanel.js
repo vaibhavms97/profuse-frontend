@@ -117,7 +117,7 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <UserCircleIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Profile</Typography>
+            <Typography ml={1}>Manage Account</Typography>
           </Box>
           <Box
             display="flex"

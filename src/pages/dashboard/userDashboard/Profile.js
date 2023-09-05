@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Grid,
   InputAdornment,
   TextField,
   Typography,
@@ -143,7 +144,7 @@ export default function Profile({ setSelectedTab }) {
 
   function handleAddMoney() {
     if (Number(accountDetails.vested_balance) + Number(money) > 10000) {
-      const validAmount = 10000 - Number(accountDetails.vested_balance)
+      const validAmount = 10000 - Number(accountDetails.vested_balance);
       toast.error(`Sorry you can add upto $${validAmount}`);
     } else {
       setAddLoading(true);
@@ -169,106 +170,117 @@ export default function Profile({ setSelectedTab }) {
       {isFetchingData && <Loader />}
       <Box pl="240px">
         <Box m={4}>
-          <Box>
-            <Typography variant="h4">Profile</Typography>
-          </Box>
-          <Box maxWidth="400px">
-            <TextField
-              sx={{ my: 2.5 }}
-              label="Name"
-              name="name"
-              onChange={handleChange}
-              value={updatedUserDetails.name}
-              error={errorDetails.name ? true : false}
-              helperText={errorDetails.name}
-              fullWidth
-              required
-              placeholder="Enter Your Name"
-            />
-            <TextField
-              sx={{ my: 2.5 }}
-              label="Phone Number"
-              name="phone"
-              onChange={handleChange}
-              value={updatedUserDetails.phone}
-              error={errorDetails.phone ? true : false}
-              helperText={errorDetails.phone}
-              fullWidth
-              placeholder="Enter Your Phone number"
-            />
-            <TextField
-              sx={{ my: 2.5 }}
-              label="Email"
-              name="email"
-              value={updatedUserDetails.email}
-              fullWidth
-              disabled
-            />
-            <Box display="flex" justifyContent="space-around">
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={handleCancel}
-                size="large"
-                sx={{ my: 2.5, width: "180px" }}
-              >
-                Cancel
-              </Button>
-              <LoadingButton
-                variant="contained"
-                onClick={handleUpdate}
-                disabled={!isUpdated}
-                loading={isLoading}
-                loadingPosition="start"
-                size="large"
-                sx={{ my: 2.5, width: "180px" }}
-              >
-                Update
-              </LoadingButton>
-            </Box>
-            {role !== "Admin" && (
-              <>
+          <Grid container>
+            <Grid item xs={6}>
+              <Box>
+                <Typography variant="h4">Profile</Typography>
+              </Box>
+              <Box maxWidth="400px">
                 <TextField
                   sx={{ my: 2.5 }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
-                  }}
-                  label="Add or Withdraw money"
-                  name="money"
-                  onChange={(e) => setMoney(e.target.value)}
-                  value={money}
+                  label="Name"
+                  name="name"
+                  onChange={handleChange}
+                  value={updatedUserDetails.name}
+                  error={errorDetails.name ? true : false}
+                  helperText={errorDetails.name}
+                  fullWidth
+                  required
+                  placeholder="Enter Your Name"
+                />
+                <TextField
+                  sx={{ my: 2.5 }}
+                  label="Phone Number"
+                  name="phone"
+                  onChange={handleChange}
+                  value={updatedUserDetails.phone}
                   error={errorDetails.phone ? true : false}
                   helperText={errorDetails.phone}
                   fullWidth
-                  placeholder="Enter Amount"
+                  placeholder="Enter Your Phone number"
+                />
+                <TextField
+                  sx={{ my: 2.5 }}
+                  label="Email"
+                  name="email"
+                  value={updatedUserDetails.email}
+                  fullWidth
+                  disabled
                 />
                 <Box display="flex" justifyContent="space-around">
-                  <LoadingButton
+                  <Button
                     variant="outlined"
-                    onClick={handleWithdraw}
-                    loading={withdrawLoading}
-                    loadingPosition="start"
+                    color="error"
+                    onClick={handleCancel}
                     size="large"
                     sx={{ my: 2.5, width: "180px" }}
                   >
-                    Withdraw
-                  </LoadingButton>
+                    Cancel
+                  </Button>
                   <LoadingButton
                     variant="contained"
-                    onClick={handleAddMoney}
-                    loading={addLoading}
+                    onClick={handleUpdate}
+                    disabled={!isUpdated}
+                    loading={isLoading}
                     loadingPosition="start"
                     size="large"
                     sx={{ my: 2.5, width: "180px" }}
                   >
-                    Add Money
+                    Update
                   </LoadingButton>
                 </Box>
-              </>
-            )}
-          </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={6}>
+              {role !== "Admin" && (
+                <>
+                  <Box>
+                    <Typography variant="h4">Manage Funds</Typography>
+                  </Box>
+                  <Box maxWidth="400px">
+                    <TextField
+                      sx={{ my: 2.5 }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      }}
+                      label="Add or Withdraw money"
+                      name="money"
+                      onChange={(e) => setMoney(e.target.value)}
+                      value={money}
+                      error={errorDetails.phone ? true : false}
+                      helperText={errorDetails.phone}
+                      fullWidth
+                      placeholder="Enter Amount"
+                    />
+                    <Box display="flex" justifyContent="space-around">
+                      <LoadingButton
+                        variant="outlined"
+                        onClick={handleWithdraw}
+                        loading={withdrawLoading}
+                        loadingPosition="start"
+                        size="large"
+                        sx={{ my: 2.5, width: "180px" }}
+                      >
+                        Withdraw
+                      </LoadingButton>
+                      <LoadingButton
+                        variant="contained"
+                        onClick={handleAddMoney}
+                        loading={addLoading}
+                        loadingPosition="start"
+                        size="large"
+                        sx={{ my: 2.5, width: "180px" }}
+                      >
+                        Add Money
+                      </LoadingButton>
+                    </Box>
+                  </Box>
+                </>
+              )}
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </>

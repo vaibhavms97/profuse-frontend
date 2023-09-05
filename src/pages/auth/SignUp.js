@@ -81,7 +81,7 @@ export default function SignUp() {
       setIsLoading(true);
       userAuthSignUpRequest(data)
       .then(res => {
-        if(res.data.status === 200) {
+        if(res.data.status === 201) {
           toast.success("User registered successfully")
           navigate("/login");
         } else {
