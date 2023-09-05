@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -23,9 +23,14 @@ export default function InvestDialog({open, setOpen, product, investmentDone}) {
   const [errorDetails, setErrorDetails] = useState({
     product_amount: "",
   });
-  const [selectedPercentage, setSelectedPercentage] = useState(product.product_offering1);
-  const [selectedDays, setSelectedDays] = useState(product.product_offering1_days);
+  const [selectedPercentage, setSelectedPercentage] = useState();
+  const [selectedDays, setSelectedDays] = useState();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setSelectedPercentage(product.product_offering1);
+    setSelectedDays(product.product_offering1_days)
+  }, [product])
 
 
   function handleClose() {

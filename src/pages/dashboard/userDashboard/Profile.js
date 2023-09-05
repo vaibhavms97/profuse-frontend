@@ -121,7 +121,7 @@ export default function Profile({ setSelectedTab }) {
   }
 
   function handleWithdraw() {
-    if (parseInt(accountDetails.account_balance) > 0) {
+    if (parseInt(accountDetails.account_balance) > parseInt(money) ) {
       setWithdrawLoading(true);
       withdrawFundRequest({ account_balance: money })
         .then((res) => {

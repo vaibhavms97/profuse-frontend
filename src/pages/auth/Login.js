@@ -79,9 +79,9 @@ export default function Login() {
           localStorage.setItem("uid", res.data.data.user._id)
           localStorage.setItem("role", res.data.data.user.role)
           if(res.data.data.user.role === "User") {
-            navigate("/userDashboard")
+            navigate("/user-dashboard")
           } else if(res.data.data.user.role === "Admin") {
-            navigate("/adminDashboard")
+            navigate("/admin-dashboard")
           }
         } else {
           toast.error(res.data.message)

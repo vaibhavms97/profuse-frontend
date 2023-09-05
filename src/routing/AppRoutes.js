@@ -16,8 +16,8 @@ export default function AppRoutes() {
         <Route path="/admin/signUp" element={<AdminSignUp />}/>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route element={<PrivateRoutesCollection />}>
-          <Route path="/userDashboard" element={<UserDashboard />}/>
-          <Route path="/adminDashboard" element={<AdminDashboard />}/>
+          <Route path="/user-dashboard/*" element={<UserDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />}/>
         </Route>
       </Routes>
     </BrowserRouter>
