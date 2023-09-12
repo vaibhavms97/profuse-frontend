@@ -28,16 +28,8 @@ import Loader from "../../../components/common/Loader";
 import Pagination from "../../../components/common/Pagination";
 import InvestDialog from "./InvestDialog";
 import InvestLogo from "../../../assets/images/invest.svg";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
 import { investAmountRequest } from "../../../services/adminService";
 
 export default function Dashboard() {
@@ -50,9 +42,8 @@ export default function Dashboard() {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [selectedOffering, setSelectedOffering] = useState();
   const [productPage, setProductPage] = useState(0);
-  const [monthlyEarnings, setMonthlyEarnings] = useState([]);
   const [amountToInvest, setAmountToInvest] = useState("");
-  const [errorDetails, setErrorDetails] = useState({amountToInvest: ""})
+  const [errorDetails, setErrorDetails] = useState({ amountToInvest: "" });
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -63,29 +54,8 @@ export default function Dashboard() {
       },
     ],
   });
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
 
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-  );
+  ChartJS.register(ArcElement, Tooltip, Legend);
 
   const options = {
     responsive: true,
@@ -95,7 +65,7 @@ export default function Dashboard() {
       },
       title: {
         display: true,
-        text: "Last 6 months Earnings",
+        text: "Earnings",
       },
     },
   };
@@ -113,9 +83,9 @@ export default function Dashboard() {
       .then((res) => {
         setUserDetails(res[0].data.data.user);
         setAccountDetails(res[1].data.data.accountData);
+        console.log("account details", res[1].data.data.accountData)
         setProductsList(res[2].data.data.products.docs);
         setProductDetails(res[2].data.data.products);
-        setMonthlyEarnings(res[3].data.data?.earnings);
       })
       .catch((err) => {
         toast.error(err.message);
@@ -127,72 +97,26 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    if(accountDetails?.total_earnings) {
+      const data = {
+        labels: ["Earnings", "Invested"],
+        datasets: [
+          {
+            label: "Amount",
+            data: [accountDetails?.total_earnings, accountDetails?.total_invested],
+            backgroundColor: ["#4848e9", "#d1d5db"]
+          }
+        ]
+      }
+      setChartData(data)
+    }
+  }, [accountDetails])
+
+  useEffect(() => {
     if (selectedProduct?.product_name) {
       setSelectedOffering(1);
     }
   }, [selectedProduct]);
-
-  useEffect(() => {
-    if (monthlyEarnings.length) {
-      let monthsObtained = [];
-      const monthlyEarningsChart = {};
-      monthlyEarnings.forEach((value) => {
-        monthsObtained.push(value.month);
-        monthlyEarningsChart[value.month] = value.earnings;
-      });
-      monthsObtained.sort(function (a, b) {
-        return b - a;
-      });
-      let monthsToShow = [];
-      monthsObtained.forEach((value) => {
-        monthsToShow.push(months[value]);
-      });
-      let lastMonth = monthsObtained[monthsObtained.length - 1] + 1;
-      for (let i = 0; i < 6 - monthsObtained.length; i++) {
-        const remainingMonths = lastMonth % 12;
-        monthsToShow.push(months[remainingMonths]);
-        monthlyEarningsChart[remainingMonths] = 0;
-        lastMonth = lastMonth + 1;
-      }
-      // console.log(monthsToShow);
-      let data = {
-        labels: monthsToShow,
-        datasets: [
-          {
-            label: "Earnings",
-            data: monthsToShow.map(
-              (value) => monthlyEarningsChart[months.indexOf(value)]
-            ),
-            backgroundColor: "#4848e9",
-          },
-        ],
-      };
-      setChartData(data);
-    } else {
-      let lastMonth = new Date().getMonth();
-      let monthsToShow = [];
-      const monthlyEarningsChart = {};
-      for (let i = 0; i < 6; i++) {
-        const remainingMonths = lastMonth % 12;
-        monthsToShow.push(months[remainingMonths]);
-        monthlyEarningsChart[remainingMonths] = 0;
-        lastMonth = lastMonth + 1;
-      }
-      let data = {
-        labels: monthsToShow,
-        datasets: [
-          {
-            label: "Earnings",
-            data: monthsToShow.map(
-              (value) => monthlyEarningsChart[months.indexOf(value)]
-            ),
-            backgroundColor: "#4848e9",
-          },
-        ],
-      };
-      setChartData(data);
-    }
-  }, [monthlyEarnings]);
 
   function handlePageChange(pageNo) {
     setIsLoading(true);
@@ -217,7 +141,7 @@ export default function Dashboard() {
       // Old version
       // setIsInvestDialogOpen(true);
       // setSelectedProduct(product);
-      checkValidations()
+      checkValidations();
     } else {
       toast.error("Sorry, you don't have sufficient balance");
     }
@@ -225,24 +149,26 @@ export default function Dashboard() {
   }
 
   function checkValidations() {
-    if(!amountToInvest) {
-      setErrorDetails({amountToInvest: "Please enter amount"});
-    } else if(amountToInvest <= 0) {
-      setErrorDetails({amountToInvest: "Please enter a valid amount"});
-    } else if(amountToInvest > selectedProduct.product_amount) {
-      setErrorDetails({amountToInvest: `Sorry you can't invest more than ${selectedProduct.product_amount}`});
+    if (!amountToInvest) {
+      setErrorDetails({ amountToInvest: "Please enter amount" });
+    } else if (amountToInvest <= 0) {
+      setErrorDetails({ amountToInvest: "Please enter a valid amount" });
+    } else if (amountToInvest > selectedProduct.product_amount) {
+      setErrorDetails({
+        amountToInvest: `Sorry you can't invest more than ${selectedProduct.product_amount}`,
+      });
     } else {
-      setErrorDetails({product_amount: ""});
+      setErrorDetails({ product_amount: "" });
       const date = new Date();
       let selectedPercentage;
       let selectedDays;
-      if(selectedOffering === 1) {
+      if (selectedOffering === 1) {
         selectedPercentage = selectedProduct.product_offering1;
         selectedDays = selectedProduct.product_offering1_days;
-      } else if(selectedOffering === 2) {
+      } else if (selectedOffering === 2) {
         selectedPercentage = selectedProduct.product_offering2;
         selectedDays = selectedProduct.product_offering2_days;
-      } else if(selectedOffering === 3) {
+      } else if (selectedOffering === 3) {
         selectedPercentage = selectedProduct.product_offering3;
         selectedDays = selectedProduct.product_offering3_days;
       }
@@ -253,24 +179,24 @@ export default function Dashboard() {
         no_of_days: selectedDays,
         product_id: selectedProduct._id,
         ends_at: date,
-      }
+      };
       setIsLoading(true);
       investAmountRequest(data)
-      .then(res => {
-        if(res.data.status === 200) {
-          investmentDone();
-          toast.success("Invested successfully")
-        } else {
-          toast.error(res.data.message)
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        toast.error(err.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
+        .then((res) => {
+          if (res.data.status === 200) {
+            investmentDone();
+            toast.success("Invested successfully");
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }
 
@@ -346,7 +272,7 @@ export default function Dashboard() {
                         columnGap={3}
                       >
                         <Typography variant="h4" mt={4}>
-                          ${accountDetails.account_balance}
+                          ${Math.round((accountDetails.account_balance + Number.EPSILON)*100)/100}
                         </Typography>
                         <Typography textAlign="end">
                           Updated On {format(new Date(), "MMM dd, yyyy")}
@@ -372,7 +298,7 @@ export default function Dashboard() {
                         columnGap={3}
                       >
                         <Typography variant="h4" mt={4}>
-                          ${accountDetails.vested_balance}
+                          ${Math.round((accountDetails.vested_balance + Number.EPSILON)*100)/100}
                         </Typography>
                         <Typography textAlign="end">
                           Updated On {format(new Date(), "MMM dd, yyyy")}
@@ -383,12 +309,15 @@ export default function Dashboard() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Bar options={options} data={chartData} />
+            <Grid item xs={6} maxHeight="326px" justifyContent="center" display="flex">
+              <Doughnut options={options} data={chartData} />
             </Grid>
           </Grid>
           <Grid container spacing={2} mt={4}>
-            <Grid item xs={7}>
+            <Grid
+              item
+              xs={selectedProduct.product_name ? 7 : 12}
+            >
               {productsList.length !== 0 && (
                 <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -454,9 +383,16 @@ export default function Dashboard() {
                   </Table>
                 </TableContainer>
               )}
+              {!isLoading && (
+                <Pagination
+                  currentPage={productDetails.page}
+                  totalPages={productDetails.totalPages}
+                  handlePageChange={handlePageChange}
+                />
+              )}
             </Grid>
-            <Grid item xs={5}>
-              {selectedProduct.product_name && (
+            {selectedProduct.product_name && (
+              <Grid item xs={5} sx={{ transition: "all 0.5s" }}>
                 <Box>
                   <Card variant="outlined" sx={{ p: 2 }}>
                     <Box>
@@ -465,7 +401,7 @@ export default function Dashboard() {
                       </Typography>
                     </Box>
                     <img
-                      src={`${process.env.REACT_APP_BACKEND_API}/api/v1/${selectedProduct?.product_image}`}
+                      src={selectedProduct?.product_image}
                       style={{
                         height: "100px",
                         width: "100%",
@@ -512,8 +448,8 @@ export default function Dashboard() {
                           name="product_amount"
                           value={amountToInvest}
                           onChange={(e) => setAmountToInvest(e.target.value)}
-                          error = {errorDetails.amountToInvest ? true : false}
-                          helperText = {errorDetails.amountToInvest}
+                          error={errorDetails.amountToInvest ? true : false}
+                          helperText={errorDetails.amountToInvest}
                           fullWidth
                           required
                         />
@@ -582,16 +518,9 @@ export default function Dashboard() {
                   </Card>
                   {/* {selectedProduct.product_name} */}
                 </Box>
-              )}
-            </Grid>
+              </Grid>
+            )}
           </Grid>
-          {!isLoading && (
-            <Pagination
-              currentPage={productDetails.page}
-              totalPages={productDetails.totalPages}
-              handlePageChange={handlePageChange}
-            />
-          )}
         </Box>
         <InvestDialog
           open={isInvestDialogOpen}

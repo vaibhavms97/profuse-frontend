@@ -24,7 +24,7 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
     productOffering3:"",
     productOffering3Days:"",
     productAmount:"",
-    productImage:[],
+    productImage:"",
   });
   const [errorDetails, setErrorDetails] = useState({
     productName:"",
@@ -107,32 +107,23 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
     } else {
       // setIsLoading(true);
       setErrorDetails(error);
-      const formData = new FormData();
-      formData.append("product_image", productDetails.productImage)
-      // formData.append("product_name", productDetails.productName)
-      // formData.append("product_description", productDetails.productDescription)
-      // formData.append("product_offering1", productDetails.productOffering1)
-      // formData.append("product_offering2", productDetails.productOffering2)
-      // formData.append("product_offering3", productDetails.productOffering3)
-      // formData.append("product_offering1_days", productDetails.productOffering1Days)
-      // formData.append("product_offering2_days", productDetails.productOffering2Days)
-      // formData.append("product_offering3_days", productDetails.productOffering3Days)
-      // formData.append("product_amount", productDetails.productAmount)
+      // const formData = new FormData();
+      // formData.append("product_image", productDetails.productImage)
 
-      formData.append(
-        "request",
-        `{"data": {
-          "product_name": "${productDetails.productName}",
-          "product_description": "${productDetails.productDescription}",
-          "product_offering1": "${productDetails.productOffering1}",
-          "product_offering2": "${productDetails.productOffering2}",
-          "product_offering3": "${productDetails.productOffering3}",
-          "product_offering1_days": "${productDetails.productOffering1Days}",
-          "product_offering2_days": "${productDetails.productOffering2Days}",
-          "product_offering3_days": "${productDetails.productOffering3Days}",
-          "product_amount": "${productDetails.productAmount}"
-        }}`
-      )
+      // formData.append(
+      //   "request",
+      //   `{"data": {
+      //     "product_name": "${productDetails.productName}",
+      //     "product_description": "${productDetails.productDescription}",
+      //     "product_offering1": "${productDetails.productOffering1}",
+      //     "product_offering2": "${productDetails.productOffering2}",
+      //     "product_offering3": "${productDetails.productOffering3}",
+      //     "product_offering1_days": "${productDetails.productOffering1Days}",
+      //     "product_offering2_days": "${productDetails.productOffering2Days}",
+      //     "product_offering3_days": "${productDetails.productOffering3Days}",
+      //     "product_amount": "${productDetails.productAmount}"
+      //   }}`
+      // )
       const data = {
         product_name: productDetails.productName,
         product_description: productDetails.productDescription,
@@ -145,38 +136,38 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         product_amount: productDetails.productAmount,
         product_image: productDetails.productImage,
       }
-      addProductRequest(formData)
-      .then(res => {
-        if(res.data.status === 201){
-          toast.success("Product added successfully");
-          const modifiedProductList = [...productsList];
-          data._id = res.data.data.product._id;
-          modifiedProductList.unshift(data);
-          setProductsList([...modifiedProductList])
-          setProductDetails({
-            productName:"",
-            productDescription:"",
-            productOffering1:"",
-            productOffering1Days:"",
-            productOffering2:"",
-            productOffering2Days:"",
-            productOffering3:"",
-            productOffering3Days:"",
-            productAmount:"",
-            productImage:"",
-          })
-          handleClose();
-        } else {
-          toast.error(res.data.message)
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        toast.error(err.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
+      // addProductRequest(data)
+      // .then(res => {
+      //   if(res.data.status === 201){
+      //     toast.success("Product added successfully");
+      //     const modifiedProductList = [...productsList];
+      //     data._id = res.data.data.product._id;
+      //     modifiedProductList.unshift(data);
+      //     setProductsList([...modifiedProductList])
+      //     setProductDetails({
+      //       productName:"",
+      //       productDescription:"",
+      //       productOffering1:"",
+      //       productOffering1Days:"",
+      //       productOffering2:"",
+      //       productOffering2Days:"",
+      //       productOffering3:"",
+      //       productOffering3Days:"",
+      //       productAmount:"",
+      //       productImage:"",
+      //     })
+      //     handleClose();
+      //   } else {
+      //     toast.error(res.data.message)
+      //   }
+      // })
+      // .catch(err => {
+      //   console.log(err);
+      //   toast.error(err.message);
+      // })
+      // .finally(() => {
+      //   setIsLoading(false);
+      // })
     }
 
   }
@@ -184,12 +175,27 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
   function handleUploadImage(event) {
     if(event.target.files.length) {
       const fileSize = Math.round(event.target.files[0].size/1024);
-      if(fileSize/1024 > 5){
-        toast.error="File size should not exceed more than 5mb"
+      if(fileSize/1024 > 2){
+        toast.error="File size should not exceed more than 2mb"
       } else {
-        setProductDetails(prev => ({...prev, productImage: event.target.files[0]}))      
+        const selectedFile = event.target.files[0];
+        convertToBase64(selectedFile)
+        .then(res => {
+          console.log(res);
+          setProductDetails(prev => ({...prev, productImage: res}))          
+        })
       }
     }
+  }
+
+  function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader(); 
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result);
+      }
+    })
   }
 
   return(

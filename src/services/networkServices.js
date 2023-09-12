@@ -2,7 +2,6 @@ import axios from "axios";
 import { toast } from "material-react-toastify";
 
 // const navigate = useNavigate();
-console.log(process.env.REACT_APP_BACKEND_API);
 const axiosConfig = {
   baseURL: process.env.REACT_APP_BACKEND_API,
   timeout: 300000,
@@ -25,7 +24,7 @@ commonXHRInstance.interceptors.request.use(
     }
 
     try {
-      // config["headers"]["Content-Type"] = "application/json";
+      config["headers"]["Content-Type"] = "application/json";
       if (tokenData) {
         config["headers"]["Authorization"] = `Bearer ${tokenData}`;
       }
