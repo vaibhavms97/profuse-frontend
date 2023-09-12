@@ -43,7 +43,7 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
     if(event.target.files.length) {
       const fileSize = Math.round(event.target.files[0].size/1024);
       if(fileSize/1024 >= 2){
-        toast.error="File size should not exceed more than 2mb"
+        toast.error("File size should not exceed more than 2mb");
       } else {
         const selectedFile = event.target.files[0];
         convertToBase64(selectedFile)

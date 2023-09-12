@@ -356,7 +356,7 @@ export default function Dashboard() {
                         >
                           <TableCell>{product.product_name}</TableCell>
                           <TableCell align="center">
-                            {product.product_description}
+                            <Typography whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">{product.product_description}</Typography>
                           </TableCell>
                           <TableCell align="center">
                             ${product.product_amount}
