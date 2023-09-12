@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "material-react-toastify";
 
 // const navigate = useNavigate();
-
+console.log(process.env.REACT_APP_BACKEND_API);
 const axiosConfig = {
   baseURL: process.env.REACT_APP_BACKEND_API,
   timeout: 300000,
