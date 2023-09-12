@@ -1,4 +1,4 @@
-import { getDashboardUrl, getProductsList, getTransactions, getUserEarnings, withdrawTransaction } from "../constants/apiUrls/dashboard";
+import { getDashboardUrl, getMonthlyEarnings, getProductsList, getTransactions, getUserEarnings, withdrawTransaction } from "../constants/apiUrls/dashboard";
 import { commonXHRInstance } from "./networkServices";
 
 
@@ -16,3 +16,6 @@ export const withdrawTransactionRequest = async (data) =>
 
 export const getUserEarningsRequest = async (pageNo) =>
   commonXHRInstance.get(getUserEarnings() + `?page=${pageNo}`);
+
+export const getMonthlyEarningsRequest = async (data) =>
+  commonXHRInstance.get(getMonthlyEarnings()+`?from=${data.from}&to=${data.to}`);

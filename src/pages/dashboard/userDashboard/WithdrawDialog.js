@@ -14,6 +14,7 @@ export default function WithdrawDialog({
   setOpen,
   selectedWithdrawId,
   setSelectedWithdrawId,
+  withdrawSuccessfull
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,6 +32,7 @@ export default function WithdrawDialog({
       .then((res) => {
         if (res.data.status === 200) {
           toast.success("Amount withdrawn successfully");
+          withdrawSuccessfull();
         } else {
           toast.error(res.data.message);
         }

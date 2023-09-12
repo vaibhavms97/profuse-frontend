@@ -4,7 +4,7 @@ import { toast } from "material-react-toastify";
 // const navigate = useNavigate();
 
 const axiosConfig = {
-  baseURL: "https://profuse-backend.vercel.app",
+  baseURL: process.env.REACT_APP_BACKEND_API,
   timeout: 300000,
 };
 
@@ -25,7 +25,7 @@ commonXHRInstance.interceptors.request.use(
     }
 
     try {
-      config["headers"]["Content-Type"] = "application/json";
+      // config["headers"]["Content-Type"] = "application/json";
       if (tokenData) {
         config["headers"]["Authorization"] = `Bearer ${tokenData}`;
       }

@@ -34,9 +34,9 @@ export default function Login() {
     const uid = localStorage.getItem("uid");
     const role = localStorage.getItem("role");
     if(uid && role === "Admin") {
-      navigate("/adminDashboard")
+      navigate("/admin-dashboard")
     } else if(uid && role === "User") {
-      navigate("/userDashboard")
+      navigate("/user-dashboard")
     }
   },[])
 

@@ -10,7 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useState } from 'react';
 import { addProductRequest } from '../../../services/adminService';
 import { toast } from 'material-react-toastify';
-import { InputAdornment } from '@mui/material';
+import { InputAdornment, Typography } from '@mui/material';
 
 export default function AddProductDialog({open, setOpen, productsList, setProductsList}){
 
@@ -23,7 +23,8 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
     productOffering2Days:"",
     productOffering3:"",
     productOffering3Days:"",
-    productAmount:""
+    productAmount:"",
+    productImage:[],
   });
   const [errorDetails, setErrorDetails] = useState({
     productName:"",
@@ -34,7 +35,8 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
     productOffering2Days:"",
     productOffering3:"",
     productOffering3Days:"",
-    productAmount:""
+    productAmount:"",
+    productImage:"",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +61,8 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
       productOffering2Days:"",
       productOffering3:"",
       productOffering3Days:"",
-      productAmount:""
+      productAmount:"",
+      productImage:"",
     }
     let isError = false
     if (!productDetails.productName) {
@@ -95,12 +98,41 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
     if(!productDetails.productAmount) {
       error.productAmount = "Please enter product amount"
     }
+    if(!productDetails.productImage) {
+      error.productImage = "Please upload image"
+    }
 
     if(isError){
       setErrorDetails(error);
     } else {
-      setIsLoading(true);
+      // setIsLoading(true);
       setErrorDetails(error);
+      const formData = new FormData();
+      formData.append("product_image", productDetails.productImage)
+      // formData.append("product_name", productDetails.productName)
+      // formData.append("product_description", productDetails.productDescription)
+      // formData.append("product_offering1", productDetails.productOffering1)
+      // formData.append("product_offering2", productDetails.productOffering2)
+      // formData.append("product_offering3", productDetails.productOffering3)
+      // formData.append("product_offering1_days", productDetails.productOffering1Days)
+      // formData.append("product_offering2_days", productDetails.productOffering2Days)
+      // formData.append("product_offering3_days", productDetails.productOffering3Days)
+      // formData.append("product_amount", productDetails.productAmount)
+
+      formData.append(
+        "request",
+        `{"data": {
+          "product_name": "${productDetails.productName}",
+          "product_description": "${productDetails.productDescription}",
+          "product_offering1": "${productDetails.productOffering1}",
+          "product_offering2": "${productDetails.productOffering2}",
+          "product_offering3": "${productDetails.productOffering3}",
+          "product_offering1_days": "${productDetails.productOffering1Days}",
+          "product_offering2_days": "${productDetails.productOffering2Days}",
+          "product_offering3_days": "${productDetails.productOffering3Days}",
+          "product_amount": "${productDetails.productAmount}"
+        }}`
+      )
       const data = {
         product_name: productDetails.productName,
         product_description: productDetails.productDescription,
@@ -111,8 +143,9 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         product_offering2_days: productDetails.productOffering2Days,
         product_offering3_days: productDetails.productOffering3Days,
         product_amount: productDetails.productAmount,
+        product_image: productDetails.productImage,
       }
-      addProductRequest(data)
+      addProductRequest(formData)
       .then(res => {
         if(res.data.status === 201){
           toast.success("Product added successfully");
@@ -129,7 +162,8 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
             productOffering2Days:"",
             productOffering3:"",
             productOffering3Days:"",
-            productAmount:""
+            productAmount:"",
+            productImage:"",
           })
           handleClose();
         } else {
@@ -145,6 +179,17 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
       })
     }
 
+  }
+
+  function handleUploadImage(event) {
+    if(event.target.files.length) {
+      const fileSize = Math.round(event.target.files[0].size/1024);
+      if(fileSize/1024 > 5){
+        toast.error="File size should not exceed more than 5mb"
+      } else {
+        setProductDetails(prev => ({...prev, productImage: event.target.files[0]}))      
+      }
+    }
   }
 
   return(
@@ -282,6 +327,13 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           required
           placeholder="Enter product amount"
         />
+        <Box display="flex" justifyContent="center" flexDirection="column">
+          <Button variant='contained' size='large' component="label" sx={{ my: 1 }}>
+            Upload image
+            <input type="file" hidden accept=".png, .jpg, .jpeg" onChange={handleUploadImage} />
+          </Button>
+          {errorDetails.productImage && <Typography color="#d32f2f" variant="caption" textAlign="center">Please upload image</Typography>}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button

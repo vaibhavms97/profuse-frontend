@@ -26,8 +26,12 @@ export default function Transactions() {
   const [selectedWithdrawId, setSelectedWithdrawId] = useState();
 
   useEffect(() => {
+    getTransactions();
+  }, []);
+
+  function getTransactions() {
     setIsLoading(true);
-    getTransactionsRequest()
+    getTransactionsRequest(transactionDetails?.page || 0)
       .then((res) => {
         setTransactionDetails(res.data.data.transactions);
         setTransactionList(res.data.data.transactions.docs);
@@ -39,9 +43,10 @@ export default function Transactions() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }
 
   function handlePageChange(pageNo) {
+    console.log("pageNo", pageNo);
     setIsLoading(true);
     getTransactionsRequest(pageNo)
       .then((res) => {
@@ -60,6 +65,10 @@ export default function Transactions() {
   function handleWithdraw(id) {
     setSelectedWithdrawId(id);
     setIsWithdrawDialogOpen(true);
+  }
+
+  function withdrawSuccessfull(){
+    getTransactions()
   }
 
   return (
@@ -156,6 +165,7 @@ export default function Transactions() {
           setOpen={setIsWithdrawDialogOpen}
           selectedWithdrawId={selectedWithdrawId}
           setSelectedWithdrawId={setSelectedWithdrawId}
+          withdrawSuccessfull={withdrawSuccessfull}
         />
       </Box>
     </>
