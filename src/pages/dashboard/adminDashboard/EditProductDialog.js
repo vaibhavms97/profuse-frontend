@@ -10,6 +10,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useState } from 'react';
 import { editProductRequest } from '../../../services/adminService';
 import { toast } from 'material-react-toastify';
+import { Typography } from '@mui/material';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function EditProductDialog({open, setOpen, selectedProduct, setSelectedProduct, handleUpdate}){
 
@@ -35,6 +37,32 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
     const name = event.target.name;
     const value = event.target.value;
     setSelectedProduct((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleUploadImage(event) {
+    if(event.target.files.length) {
+      const fileSize = Math.round(event.target.files[0].size/1024);
+      if(fileSize/1024 >= 2){
+        toast.error="File size should not exceed more than 2mb"
+      } else {
+        const selectedFile = event.target.files[0];
+        convertToBase64(selectedFile)
+        .then(res => {
+          console.log(res);
+          setSelectedProduct(prev => ({...prev, productImage: res}))          
+        })
+      }
+    }
+  }
+
+  function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader(); 
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result);
+      }
+    })
   }
 
   function handleEditProduct(){
@@ -99,6 +127,7 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
         product_offering2_days: selectedProduct.product_offering2_days,
         product_offering3_days: selectedProduct.product_offering3_days,
         product_amount: selectedProduct.product_amount,
+        product_image: selectedProduct.productImage,
         _id: selectedProduct._id,
       }
       editProductRequest(data)
@@ -120,6 +149,10 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
       })
     }
 
+  }
+
+  function handleDeleteImage() {
+    setSelectedProduct(prev => ({...prev, product_image: ""}))
   }
 
   return(
@@ -236,6 +269,22 @@ export default function EditProductDialog({open, setOpen, selectedProduct, setSe
           required
           placeholder="Enter product amount"
         />
+        <Box display="flex" justifyContent="center" flexDirection="column" my={1}>
+          {selectedProduct.product_image && 
+            <Box display="flex" justifyContent="center">
+              <Box position="relative">
+                <img src={selectedProduct.product_image} alt="product_image" width="70px" height="70px" style={{borderRadius: "4px", border:"2px solid #939394", margin:"10px auto"}} />
+                <XMarkIcon onClick={handleDeleteImage} style={{position: "absolute", top: "3px", right:"-10px", width:"20px", height:"20px", background:"#939394", borderRadius:"50%", cursor:"pointer"}} />
+              </Box>
+            </Box>
+          }
+          <Typography variant="caption" textAlign="center">Accepts .png, .jpg, .jpeg and image size should be less than 2mb</Typography>
+          <Button variant='contained' size='large' component="label" sx={{ my: 1 }}>
+            Upload image
+            <input type="file" hidden accept=".png, .jpg, .jpeg" onChange={handleUploadImage} />
+          </Button>
+          {errorDetails.productImage && <Typography color="#d32f2f" variant="caption" textAlign="center">Please upload image</Typography>}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button

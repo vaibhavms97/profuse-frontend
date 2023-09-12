@@ -34,7 +34,7 @@ import { investAmountRequest } from "../../../services/adminService";
 
 export default function Dashboard() {
   const [userDetails, setUserDetails] = useState({});
-  const [accountDetails, setAccountDetails] = useState({});
+  const [accountDetails, setAccountDetails] = useState({vested_balance: 0, account_balance: 0});
   const [productDetails, setProductDetails] = useState({});
   const [productsList, setProductsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

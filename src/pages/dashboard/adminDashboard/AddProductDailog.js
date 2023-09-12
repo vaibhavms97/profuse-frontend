@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,11 +7,10 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { useState } from 'react';
 import { addProductRequest } from '../../../services/adminService';
 import { toast } from 'material-react-toastify';
 import { InputAdornment, Typography } from '@mui/material';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function AddProductDialog({open, setOpen, productsList, setProductsList}){
 
@@ -136,38 +136,38 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         product_amount: productDetails.productAmount,
         product_image: productDetails.productImage,
       }
-      // addProductRequest(data)
-      // .then(res => {
-      //   if(res.data.status === 201){
-      //     toast.success("Product added successfully");
-      //     const modifiedProductList = [...productsList];
-      //     data._id = res.data.data.product._id;
-      //     modifiedProductList.unshift(data);
-      //     setProductsList([...modifiedProductList])
-      //     setProductDetails({
-      //       productName:"",
-      //       productDescription:"",
-      //       productOffering1:"",
-      //       productOffering1Days:"",
-      //       productOffering2:"",
-      //       productOffering2Days:"",
-      //       productOffering3:"",
-      //       productOffering3Days:"",
-      //       productAmount:"",
-      //       productImage:"",
-      //     })
-      //     handleClose();
-      //   } else {
-      //     toast.error(res.data.message)
-      //   }
-      // })
-      // .catch(err => {
-      //   console.log(err);
-      //   toast.error(err.message);
-      // })
-      // .finally(() => {
-      //   setIsLoading(false);
-      // })
+      addProductRequest(data)
+      .then(res => {
+        if(res.data.status === 201){
+          toast.success("Product added successfully");
+          const modifiedProductList = [...productsList];
+          data._id = res.data.data.product._id;
+          modifiedProductList.unshift(data);
+          setProductsList([...modifiedProductList])
+          setProductDetails({
+            productName:"",
+            productDescription:"",
+            productOffering1:"",
+            productOffering1Days:"",
+            productOffering2:"",
+            productOffering2Days:"",
+            productOffering3:"",
+            productOffering3Days:"",
+            productAmount:"",
+            productImage:"",
+          })
+          handleClose();
+        } else {
+          toast.error(res.data.message)
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        toast.error(err.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
     }
 
   }
@@ -175,13 +175,12 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
   function handleUploadImage(event) {
     if(event.target.files.length) {
       const fileSize = Math.round(event.target.files[0].size/1024);
-      if(fileSize/1024 > 2){
-        toast.error="File size should not exceed more than 2mb"
+      if(fileSize/1024 >= 2){
+        toast.error("File size should not exceed more than 2mb");
       } else {
         const selectedFile = event.target.files[0];
         convertToBase64(selectedFile)
         .then(res => {
-          console.log(res);
           setProductDetails(prev => ({...prev, productImage: res}))          
         })
       }
@@ -196,6 +195,10 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
         resolve(reader.result);
       }
     })
+  }
+
+  function handleDeleteImage() {
+    setProductDetails(prev => ({...prev, productImage: ""}))
   }
 
   return(
@@ -333,7 +336,16 @@ export default function AddProductDialog({open, setOpen, productsList, setProduc
           required
           placeholder="Enter product amount"
         />
-        <Box display="flex" justifyContent="center" flexDirection="column">
+        <Box display="flex" justifyContent="center" flexDirection="column" my={1}>
+          {productDetails.productImage && 
+            <Box display="flex" justifyContent="center">
+              <Box position="relative">
+                <img src={productDetails.productImage} alt="product_image" width="70px" height="70px" style={{borderRadius: "4px", border:"2px solid #939394", margin:"10px auto"}} />
+                <XMarkIcon onClick={handleDeleteImage} style={{position: "absolute", top: "3px", right:"-10px", width:"20px", height:"20px", background:"#939394", borderRadius:"50%", cursor:"pointer"}} />
+              </Box>
+            </Box>
+          }
+          <Typography variant="caption" textAlign="center">Accepts .png, .jpg, .jpeg and image size should be less than 2mb</Typography>
           <Button variant='contained' size='large' component="label" sx={{ my: 1 }}>
             Upload image
             <input type="file" hidden accept=".png, .jpg, .jpeg" onChange={handleUploadImage} />
