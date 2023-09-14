@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { getAdminEarningsRequest } from "../../../services/adminService";
 import { toast } from "material-react-toastify";
 import { getUserEarningsRequest } from "../../../services/dashboardServices";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
 
 export default function Earnings() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function Earnings() {
   const [transactionList, setTransactionList] = useState([]);
   const [productPage, setProductPage] = useState(0);
   const role = localStorage.getItem("role");
+  const isValidScreenSize = useWindowResizeHandler();
 
   useEffect(() => {
     handlePageChange(0);
@@ -64,9 +66,9 @@ export default function Earnings() {
   return (
     <>
       {isLoading && <Loader />}
-      <Box pl="240px">
+      <Box pl={isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
-        <Typography variant="h4">{role === "Admin" ? "Admin" : "Your"} Earnings</Typography>
+        <Typography variant="h3" fontFamily="Recoleta-bold">{role === "Admin" ? "Admin" : "Your"} Earnings</Typography>
           {transactionList.length !== 0 && (
             <TableContainer component={Paper} sx={{ mt: 4 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">

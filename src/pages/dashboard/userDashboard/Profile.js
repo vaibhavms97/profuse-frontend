@@ -20,6 +20,7 @@ import {
   depositFundRequest,
   withdrawFundRequest,
 } from "../../../services/adminService";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
 
 export default function Profile({ setSelectedTab }) {
   const [userDetails, setUserDetails] = useState({
@@ -48,6 +49,7 @@ export default function Profile({ setSelectedTab }) {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const role = localStorage.getItem("role");
+  const isValidScreenSize = useWindowResizeHandler();
 
   useEffect(() => {
     setIsFetchingData(true);
@@ -168,12 +170,12 @@ export default function Profile({ setSelectedTab }) {
   return (
     <>
       {isFetchingData && <Loader />}
-      <Box pl="240px">
+      <Box pl={isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
           <Grid container>
             <Grid item xs={6}>
               <Box>
-                <Typography variant="h4">Profile</Typography>
+                <Typography variant="h3" fontFamily="Recoleta-bold">Profile</Typography>
               </Box>
               <Box maxWidth="400px">
                 <TextField
@@ -235,7 +237,7 @@ export default function Profile({ setSelectedTab }) {
               {role !== "Admin" && (
                 <>
                   <Box>
-                    <Typography variant="h4">Manage Funds</Typography>
+                    <Typography variant="h3" fontFamily="Recoleta-bold">Manage Funds</Typography>
                   </Box>
                   <Box maxWidth="400px">
                     <TextField

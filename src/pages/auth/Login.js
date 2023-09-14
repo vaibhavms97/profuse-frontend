@@ -111,13 +111,14 @@ export default function Login() {
         <Typography
           color="#4848e9"
           variant="h3"
+          fontFamily="Recoleta-bold"
           sx={{ display: "flex", alignItems: "center" }}
         >
           <BoltIcon sx={{ fontSize: "42px" }} />
           Profuse
         </Typography>
         <Box mt={2.5} width={400}>
-          <Typography variant="h4" textAlign="left">
+          <Typography variant="h4" textAlign="left" fontFamily="Recoleta-bold">
             Login
           </Typography>
           <TextField

@@ -17,6 +17,7 @@ import Pagination from "../../../components/common/Pagination";
 import { getTransactionsRequest } from "../../../services/dashboardServices";
 import { format } from "date-fns";
 import WithdrawDialog from "./WithdrawDialog";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
 
 export default function Transactions() {
   const [transactionDetails, setTransactionDetails] = useState({});
@@ -24,6 +25,7 @@ export default function Transactions() {
   const [isLoading, setIsLoading] = useState(false);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [selectedWithdrawId, setSelectedWithdrawId] = useState();
+  const isValidScreenSize = useWindowResizeHandler();
 
   useEffect(() => {
     getTransactions();
@@ -74,9 +76,9 @@ export default function Transactions() {
   return (
     <>
       {isLoading && <Loader />}
-      <Box pl="240px">
+      <Box pl={isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
-          <Typography variant="h4">Your Transactions</Typography>
+          <Typography variant="h3" fontFamily="Recoleta-bold">Your Transactions</Typography>
           {transactionList.length !== 0 && (
             <TableContainer component={Paper} sx={{ mt: 4 }}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">

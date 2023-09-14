@@ -7,12 +7,30 @@ import { CubeIcon, UserGroupIcon, ArrowRightOnRectangleIcon, UserCircleIcon, Cur
 import BoltIcon from "@mui/icons-material/Bolt";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import useWindowResizeHandler from "../../../../hooks/useWindowResizeHandler";
+import { BurgerBoughie } from "../../../../hooks/burgerBougie/BurgerBougie";
+import { useEffect, useState } from "react";
 
 
 export default function SidePanel({selectedTab, setSelectedTab}) {
-  
-  const drawerWidth = 240;
+  const isValidScreenSize = useWindowResizeHandler();
+
+  const [isMenuBarExpanded, setIsMenuBarExpanded] = useState(false);
+  const [drawerWidth, setDrawerWidth] = useState(isValidScreenSize ? 90 : 240);
   const navigate = useNavigate();
+
+  
+  useEffect(() => {
+    setDrawerWidth(prev => (prev === 90 ? 240 : 90))
+  },[isMenuBarExpanded])
+  
+  useEffect(() => {
+    setIsMenuBarExpanded(isValidScreenSize ? true : false)
+  }, [isValidScreenSize])
+  
+  function handleMenuBar() {
+    setIsMenuBarExpanded(prev => !prev)
+  }
 
   function handleLogout() {
     setSelectedTab("logout")
@@ -30,19 +48,41 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
+            transition: "0.5s ease-in-out"
           },
         }}
         variant="permanent"
         anchor="left"
       >
+        {!isValidScreenSize && <Toolbar 
+          onClick={handleMenuBar}
+          sx={{cursor: "pointer"}}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={isMenuBarExpanded ? "end" : "center"}
+            width="100%"
+          >
+            <BurgerBoughie isClosed={isMenuBarExpanded} />
+          </Box>
+        </Toolbar>}
         <Toolbar>
           <Typography
             color="#4848e9"
-            variant="h5"
+            fontFamily="Recoleta-bold"
             sx={{ display: "flex", alignItems: "center" }}
           >
             <BoltIcon sx={{ fontSize: "30px" }} />
-            Profuse
+            {isMenuBarExpanded && (
+              <Typography
+                color="#4848e9"
+                variant="h5"
+                fontFamily="Recoleta-bold"
+              >
+                Profuse
+              </Typography>
+            )}
           </Typography>
         </Toolbar>
         <Divider />
@@ -50,11 +90,14 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
           <Box
             display="flex"
             alignItems="center"
-            width="86%"
+            minWidth={isMenuBarExpanded ? "200px" : "50px"}
             p={1.5}
             mx={2}
             my={0.5}
-            onClick={() => setSelectedTab("products")}
+            onClick={() => {
+              setSelectedTab("products")
+              setIsMenuBarExpanded(false)
+            }}
             sx={{
               cursor: "pointer",
               borderRadius: "8px",
@@ -63,16 +106,19 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <CubeIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Products</Typography>
+            {isMenuBarExpanded && <Typography ml={1}>Products</Typography>}
           </Box>
           <Box
             display="flex"
             alignItems="center"
-            width="86%"
+            minWidth={isMenuBarExpanded ? "200px" : "50px"}
             p={1.5}
             mx={2}
             my={0.5}
-            onClick={() => setSelectedTab("earnings")}
+            onClick={() => {
+              setSelectedTab("earnings")
+              setIsMenuBarExpanded(false)
+            }}
             sx={{
               cursor: "pointer",
               borderRadius: "8px",
@@ -81,16 +127,19 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <CurrencyDollarIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Admin Earnings</Typography>
+            {isMenuBarExpanded && <Typography ml={1}>Admin Earnings</Typography>}
           </Box>
           <Box
             display="flex"
             alignItems="center"
-            width="86%"
+            minWidth={isMenuBarExpanded ? "200px" : "50px"}
             p={1.5}
             mx={2}
             my={0.5}
-            onClick={() => setSelectedTab("manageUsers")}
+            onClick={() => {
+              setSelectedTab("manageUsers")
+              setIsMenuBarExpanded(false)
+            }}
             sx={{
               cursor: "pointer",
               borderRadius: "8px",
@@ -99,16 +148,19 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <UserGroupIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Manage Users</Typography>
+            {isMenuBarExpanded && <Typography ml={1}>Manage Users</Typography>}
           </Box>
           <Box
             display="flex"
             alignItems="center"
-            width="86%"
+            minWidth={isMenuBarExpanded ? "200px" : "50px"}
             p={1.5}
             mx={2}
             my={0.5}
-            onClick={() => setSelectedTab("profile")}
+            onClick={() => {
+              setSelectedTab("profile")
+              setIsMenuBarExpanded(false)
+            }}
             sx={{
               cursor: "pointer",
               borderRadius: "8px",
@@ -117,12 +169,12 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <UserCircleIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Profile</Typography>
+            {isMenuBarExpanded && <Typography ml={1}>Profile</Typography>}
           </Box>
           <Box
             display="flex"
             alignItems="center"
-            width="86%"
+            minWidth={isMenuBarExpanded ? "200px" : "50px"}
             p={1.5}
             mx={2}
             my={0.5}
@@ -135,7 +187,7 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
             }}
           >
             <ArrowRightOnRectangleIcon style={{ width: "30px", height: "30px" }} />
-            <Typography ml={1}>Logout</Typography>
+            {isMenuBarExpanded && <Typography ml={1}>Logout</Typography>}
           </Box>
         </Box>
       </Drawer>

@@ -14,6 +14,7 @@ import { deleteProductRequest, getProductsRequest } from "../../../services/admi
 import { toast } from "material-react-toastify";
 import EditProductDialog from "./EditProductDialog";
 import Pagination from "../../../components/common/Pagination";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
 
 export default function Products() {
   const [productsList, setProductsList] = useState([]);
@@ -23,6 +24,7 @@ export default function Products() {
   const [isEditProductDialogOpen, setIsEditProductDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({});
   const [selectedProductIndex, setSelectedProductIndex] = useState();
+  const isValidScreenSize = useWindowResizeHandler();
 
   useEffect(() => {
     setIsLoading(true);
@@ -90,7 +92,7 @@ export default function Products() {
   return (
     <>
       {isLoading && <Loader />}
-      <Box pl="240px">
+      <Box pl={isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
           <Box>
             <Typography variant="h4">Products</Typography>

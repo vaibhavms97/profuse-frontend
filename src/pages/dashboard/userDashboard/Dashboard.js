@@ -31,9 +31,11 @@ import InvestLogo from "../../../assets/images/invest.svg";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { investAmountRequest } from "../../../services/adminService";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
+
 
 export default function Dashboard() {
-  const [userDetails, setUserDetails] = useState({});
+  const [userDetails, setUserDetails] = useState({name: ""});
   const [accountDetails, setAccountDetails] = useState({vested_balance: 0, account_balance: 0});
   const [productDetails, setProductDetails] = useState({});
   const [productsList, setProductsList] = useState([]);
@@ -45,15 +47,16 @@ export default function Dashboard() {
   const [amountToInvest, setAmountToInvest] = useState("");
   const [errorDetails, setErrorDetails] = useState({ amountToInvest: "" });
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: ["Earnings", "Invested"],
     datasets: [
       {
-        label: "Earnings",
+        label: "Amount",
         data: [],
-        backgroundColor: "#4848e9",
+        backgroundColor: ["#4848e9", "#d1d5db"]
       },
     ],
   });
+  const isValidScreenSize = useWindowResizeHandler();
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -70,6 +73,24 @@ export default function Dashboard() {
     },
   };
 
+  const plugins = [
+    {
+      afterDraw: function (chart) {
+        console.log("chartData", chart)
+        if (chart.data.datasets[0].data.length < 1) {
+          let ctx = chart.ctx;
+          let width = chart.width;
+          let height = chart.height;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.font = "30px Arial";
+          ctx.fillText("No data to display", width / 2, height / 2);
+          ctx.restore();
+        }
+      },
+    },
+  ];
+
   useEffect(() => {
     const month = new Date().getMonth();
     setIsLoading(true);
@@ -83,7 +104,6 @@ export default function Dashboard() {
       .then((res) => {
         setUserDetails(res[0].data.data.user);
         setAccountDetails(res[1].data.data.accountData);
-        console.log("account details", res[1].data.data.accountData)
         setProductsList(res[2].data.data.products.docs);
         setProductDetails(res[2].data.data.products);
       })
@@ -97,7 +117,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if(accountDetails?.total_earnings) {
+    if(accountDetails?.total_earnings || accountDetails?.total_invested) {
       const data = {
         labels: ["Earnings", "Invested"],
         datasets: [
@@ -226,10 +246,10 @@ export default function Dashboard() {
   return (
     <>
       {isLoading && <Loader />}
-      <Box pl="240px">
+      <Box pl={isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
           <Box>
-            <Typography variant="h4">Dashboard</Typography>
+            <Typography variant="h3" fontFamily="Recoleta-bold">Dashboard</Typography>
           </Box>
           <Grid container rowSpacing={2} columnSpacing={10} mt={2}>
             <Grid item xs={6}>
@@ -246,16 +266,16 @@ export default function Dashboard() {
                     >
                       <Box>
                         <Typography color="#fff">Welcome back 👋</Typography>
-                        <Typography color="#fff" variant="h4">
-                          {userDetails.name}
+                        <Typography color="#fff" variant="h4" fontFamily="Recoleta-bold">
+                          {userDetails?.name[0]?.toUpperCase()+userDetails?.name?.split(" ")[0].substring(1)}
                         </Typography>
                       </Box>
                       <Box>
                         <img
                           src={InvestLogo}
                           alt="invest"
-                          height="150px"
-                          style={{ marginRight: "20px" }}
+                          height="130px"
+                          style={{ marginRight: "20px",marginTop:"10px" }}
                         />
                       </Box>
                     </Box>
@@ -265,19 +285,12 @@ export default function Dashboard() {
                   <Card variant="outlined" sx={{ mb: 2 }}>
                     <CardContent>
                       Availabe funds
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="flex-end"
-                        columnGap={3}
-                      >
-                        <Typography variant="h4" mt={4}>
-                          ${Math.round((accountDetails.account_balance + Number.EPSILON)*100)/100}
-                        </Typography>
-                        <Typography textAlign="end">
-                          Updated On {format(new Date(), "MMM dd, yyyy")}
-                        </Typography>
-                      </Box>
+                      <Typography variant="h4" mt={3}>
+                        ${Math.round((accountDetails.account_balance + Number.EPSILON)*100)/100}
+                      </Typography>
+                      <Typography variant="caption">
+                        Updated On {format(new Date(), "MMM dd, yyyy")}
+                      </Typography>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -291,26 +304,19 @@ export default function Dashboard() {
                   >
                     <CardContent>
                       Invested
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="flex-end"
-                        columnGap={3}
-                      >
-                        <Typography variant="h4" mt={4}>
-                          ${Math.round((accountDetails.vested_balance + Number.EPSILON)*100)/100}
-                        </Typography>
-                        <Typography textAlign="end">
-                          Updated On {format(new Date(), "MMM dd, yyyy")}
-                        </Typography>
-                      </Box>
+                      <Typography variant="h4" mt={3}>
+                        ${Math.round((accountDetails.vested_balance + Number.EPSILON)*100)/100}
+                      </Typography>
+                      <Typography variant="caption">
+                        Updated On {format(new Date(), "MMM dd, yyyy")}
+                      </Typography>
                     </CardContent>
                   </Card>
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={6} maxHeight="326px" justifyContent="center" display="flex">
-              <Doughnut options={options} data={chartData} />
+              <Doughnut options={options} data={chartData} plugins={plugins} />
             </Grid>
           </Grid>
           <Grid container spacing={2} mt={4}>
@@ -326,14 +332,14 @@ export default function Dashboard() {
                         <TableCell style={{ width: "150px" }}>
                           Product Name
                         </TableCell>
-                        <TableCell align="center">
+                        <TableCell align="center" style={{ width: "300px" }}>
                           Product Description
                         </TableCell>
                         <TableCell align="center">Avaible Funds</TableCell>
                         {/* <TableCell align="center">Product Offering 1</TableCell>
-                    <TableCell align="center">Product Offering 2</TableCell>
-                    <TableCell align="center">Product Offering 3</TableCell>
-                    <TableCell align="center">Action</TableCell> */}
+                            <TableCell align="center">Product Offering 2</TableCell>
+                            <TableCell align="center">Product Offering 3</TableCell>
+                            <TableCell align="center">Action</TableCell> */}
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -355,8 +361,12 @@ export default function Dashboard() {
                           }}
                         >
                           <TableCell>{product.product_name}</TableCell>
-                          <TableCell align="center">
-                            <Typography whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">{product.product_description}</Typography>
+                          <TableCell align="center" >
+                            <Box display="flex" justifyContent="center">
+                              <Typography sx={{maxWidth:"300px"}} textAlign="center" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+                                {product.product_description}
+                              </Typography>
+                            </Box>
                           </TableCell>
                           <TableCell align="center">
                             ${product.product_amount}

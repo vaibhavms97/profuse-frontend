@@ -113,12 +113,13 @@ export default function AdminSignUp() {
           color="#4848e9"
           variant="h3"
           sx={{ display: "flex", alignItems: "center" }}
+          fontFamily="Recoleta-bold"
         >
           <BoltIcon sx={{ fontSize: "42px" }} />
           Profuse
         </Typography>
         <Box mt={2.5} width={400}>
-          <Typography variant="h4" textAlign="left">
+          <Typography variant="h4" textAlign="left" fontFamily="Recoleta-bold">
             Admin Sign Up
           </Typography>
           <TextField

@@ -16,18 +16,19 @@ import {
   getUsersRequest,
 } from "../../../services/adminService";
 import {
-  TrashIcon,
   NoSymbolIcon,
   MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "material-react-toastify";
 import Loader from "../../../components/common/Loader";
 import Pagination from "../../../components/common/Pagination";
+import useWindowResizeHandler from "../../../hooks/useWindowResizeHandler";
 
 export default function ManageUsers() {
   const [usersList, setUsersList] = useState([]);
   const [users, setUsers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const isValidScreenSize = useWindowResizeHandler();
 
   useEffect(() => {
     setIsLoading(true);
@@ -52,8 +53,6 @@ export default function ManageUsers() {
     });
   }
 
-  function handleDelete() {}
-
   function handlePageChange(pageNo) {
     setIsLoading(true);
     getUsersRequest(pageNo)
@@ -69,7 +68,7 @@ export default function ManageUsers() {
   return (
     <>
       {isLoading && <Loader/>}
-      <Box sx={{ pl: "240px" }}>
+      <Box pl = {isValidScreenSize ? "240px" : "80px"}>
         <Box m={4}>
           <Box>
             <Typography variant="h4">Manage Users</Typography>
