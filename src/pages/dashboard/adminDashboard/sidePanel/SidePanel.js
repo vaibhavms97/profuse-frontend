@@ -19,10 +19,13 @@ export default function SidePanel({selectedTab, setSelectedTab}) {
   const [drawerWidth, setDrawerWidth] = useState(isValidScreenSize ? 90 : 240);
   const navigate = useNavigate();
 
-  
   useEffect(() => {
-    setDrawerWidth(prev => (prev === 90 ? 240 : 90))
-  },[isMenuBarExpanded])
+    if(isValidScreenSize || isMenuBarExpanded) {
+      setDrawerWidth(240)
+    } else if(!isValidScreenSize && !isMenuBarExpanded) {
+      setDrawerWidth(90)
+    }
+  },[isMenuBarExpanded, isValidScreenSize])
   
   useEffect(() => {
     setIsMenuBarExpanded(isValidScreenSize ? true : false)
